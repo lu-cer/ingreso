@@ -9,22 +9,34 @@
 
   <form id="formulario">
     <label for="busqueda">¿Qué estás buscando?</label><br><br>
-    <input type="text" id="busqueda" name="busqueda" placeholder="Ej: abogado constitucional" style="padding: 8px; width: 300px;" required>
+    <input type="text" id="busqueda" name="busqueda" placeholder="Ej: abogados constitucionales Capital Federal" style="padding: 8px; width: 300px;" required>
     <button type="submit" style="padding: 8px 12px; margin-left: 10px;">Buscar</button>
   </form>
 
   <p id="mensaje" style="margin-top: 20px;"></p>
 
   <script>
+    // Función para transformar el texto ingresado en formato URL amigable
+    function transformarBusqueda(texto) {
+      return texto
+        .normalize("NFD")                      // Quita tildes
+        .replace(/[\u0300-\u036f]/g, "")       // Quita acentos
+        .trim()                                // Elimina espacios innecesarios
+        .toLowerCase()                         // Convierte todo a minúsculas
+        .replace(/\s+/g, "-")                  // Reemplaza espacios por guiones
+        .replace(/[^a-z0-9\-]/g, "");          // Quita caracteres especiales
+    }
+
+    // Evento del formulario
     document.getElementById('formulario').addEventListener('submit', async function(e) {
-      e.preventDefault(); // Evita que se recargue la página
+      e.preventDefault();
 
-      const busqueda = document.getElementById('busqueda').value;
+      const entrada = document.getElementById('busqueda').value;
+      const textoFormateado = transformarBusqueda(entrada);
 
-      // Llama al webhook de n8n
       try {
-        const res = await fetch('http://localhost:5678/webhook-test/google-maps?busqueda=' + encodeURIComponent(busqueda));
-        
+        const res = await fetch('http://localhost:5678/webhook-test/google-maps?busqueda=' + encodeURIComponent(textoFormateado));
+
         if (res.ok) {
           document.getElementById('mensaje').textContent = 'Búsqueda enviada correctamente a n8n.';
         } else {
