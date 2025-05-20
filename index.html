@@ -35,7 +35,7 @@
       const textoFormateado = transformarBusqueda(entrada);
 
       try {
-        const res = await fetch('http://localhost:5678/webhook-test/google-maps?busqueda=' + encodeURIComponent(textoFormateado));
+        const res = await fetch('http://localhost:5678/webhook/google-maps?busqueda=' + encodeURIComponent(textoFormateado));
 
         if (res.ok) {
           document.getElementById('mensaje').textContent = 'Búsqueda enviada correctamente a n8n.';
